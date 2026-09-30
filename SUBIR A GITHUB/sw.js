@@ -1,5 +1,5 @@
 // Cambia el número cuando actualices la app para que los celulares bajen la nueva versión
-const CACHE = "dinero-v1";
+const CACHE = "dinero-v2";
 const LOCAL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 const CDN = [
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",

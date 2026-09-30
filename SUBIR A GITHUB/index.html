@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dinero Equilibrado</title>
+<title>Dinero Claro</title>
 <meta name="description" content="Reparte tu dinero con la regla 50/30/20 y anota en qué gastas.">
 <meta name="theme-color" content="#F2F4F7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F131A" media="(prefers-color-scheme: dark)">
@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Dinero">
+<meta name="apple-mobile-web-app-title" content="Dinero Claro">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,6 +142,16 @@ button,input{font:inherit;color:inherit}
 .remind .export{border-top:0;padding-top:0}
 .remind .export button{background:var(--surface)}
 .remind .later{border:0;background:transparent;color:var(--muted);text-decoration:underline;cursor:pointer;font-weight:500}
+.install{display:grid;gap:10px;padding:14px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.install-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.install-row p{margin:0;font-size:.9rem;color:var(--muted);min-width:0;flex:1 1 180px}
+.install-row p b{color:var(--fg)}
+.install-btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--fg);color:var(--bg);white-space:nowrap}
+.install-x{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:.85rem;text-decoration:underline}
+.steps{margin:0;padding-left:1.3em;display:grid;gap:8px;font-size:.92rem}
+.steps li::marker{font-weight:700}
+.steps .key{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-weight:600;white-space:nowrap}
+.steps svg{width:15px;height:15px;vertical-align:-2px}
 .local-note{font-size:.78rem;color:var(--muted)}
 
 @media (max-width:420px){
@@ -154,9 +164,28 @@ button,input{font:inherit;color:inherit}
 
 <div class="wrap">
   <header>
-    <h1>Dinero Equilibrado</h1>
+    <h1>Dinero Claro</h1>
     <p class="lead">Escribe cuánto te entra y te decimos cuánto va para lo necesario, cuánto para tus gustos y cuánto guardar, con la regla 50/30/20.</p>
   </header>
+
+  <section class="install" id="install" hidden aria-label="Instalar la app">
+    <div class="install-row">
+      <p><b>Instálala en tu celular.</b> Te queda el ícono como cualquier app y funciona sin internet.</p>
+      <button type="button" class="install-btn" id="installBtn">📲 Instalar app</button>
+    </div>
+    <ol class="steps" id="stepsIos" hidden>
+      <li>Toca el botón <span class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Compartir</span> de Safari (abajo o arriba de la pantalla).</li>
+      <li>Baja y elige <span class="key">Agregar a pantalla de inicio</span>.</li>
+      <li>Toca <span class="key">Agregar</span>. ¡Listo! Búscala en tu pantalla como <b>Dinero Claro</b>.</li>
+      <li class="muted-li">¿No te sale la opción? Abre este enlace en <b>Safari</b>.</li>
+    </ol>
+    <ol class="steps" id="stepsAndroid" hidden>
+      <li>Toca los <span class="key">⋮</span> de arriba a la derecha en Chrome.</li>
+      <li>Elige <span class="key">Instalar app</span> o <span class="key">Agregar a pantalla principal</span>.</li>
+      <li>Confirma. ¡Listo! Búscala como <b>Dinero Claro</b>.</li>
+    </ol>
+    <button type="button" class="install-x" id="installHide">Ya la tengo / ocultar</button>
+  </section>
 
   <section class="remind" id="remind" hidden aria-live="polite">
     <b id="remindTitle"></b>
@@ -587,6 +616,42 @@ button,input{font:inherit;color:inherit}
   render();
 })();
 </script>
+<script>
+(() => {
+  const box = document.getElementById("install"), btn = document.getElementById("installBtn");
+  const ios = document.getElementById("stepsIos"), andr = document.getElementById("stepsAndroid");
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(ua);
+  const installed = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  let hidden = false; try { hidden = localStorage.getItem("install-hidden") === "1"; } catch {}
+  let prompt = null;
+
+  function show() { if (!installed() && !hidden) box.hidden = false; }
+  if (isIOS || isAndroid) show();
+
+  // Android / Chrome: instalar con un toque
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); prompt = e; show(); });
+  window.addEventListener("appinstalled", () => { box.hidden = true; });
+
+  btn.addEventListener("click", async () => {
+    if (prompt) {
+      prompt.prompt();
+      const r = await prompt.userChoice.catch(() => null);
+      prompt = null;
+      if (r && r.outcome === "accepted") box.hidden = true;
+      return;
+    }
+    const steps = isIOS ? ios : andr;
+    steps.hidden = !steps.hidden;
+  });
+  document.getElementById("installHide").addEventListener("click", () => {
+    box.hidden = true;
+    try { localStorage.setItem("install-hidden", "1"); } catch {}
+  });
+})();
+</script>
+
 <script>
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 </script>
