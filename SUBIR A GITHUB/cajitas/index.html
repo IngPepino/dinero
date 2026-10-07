@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cajitas de Ahorro</title>
+<meta name="description" content="Tus cajas de ahorro: para qué es cada una, cuánto llevas y cuándo le metiste dinero.">
+<meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cajitas de Ahorro">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+input,select,button,textarea{font-size:16px;font-family:inherit}
+:root{
+  --bg:#F6F1E7; --surface:#FFFDF8; --line:#E4DCCB; --fg:#1F1C16; --muted:#6B6457;
+  --accent:#1E6B4A; --accent-fg:#FFFFFF; --accent-soft:#DCEDE3; --danger:#B23B2E;
+  --c-verde:#2F8F5B; --c-azul:#2F6FB5; --c-coral:#D2603F; --c-morado:#7B5CC4; --c-oro:#A97A0C; --c-rosa:#C24F7E;
+  --f-display:"Fredoka",ui-rounded,system-ui,sans-serif;
+  --f-body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14130F; --surface:#1E1C17; --line:#36322A; --fg:#F1ECE1; --muted:#A79F90;
+  --accent:#5CC793; --accent-fg:#0E1A13; --accent-soft:#1C3227; --danger:#F07A6B;
+  --c-verde:#5CC793; --c-azul:#6FA8EC; --c-coral:#F08A68; --c-morado:#A68BEA; --c-oro:#E0B341; --c-rosa:#EC85AE;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14130F; --surface:#1E1C17; --line:#36322A; --fg:#F1ECE1; --muted:#A79F90;
+  --accent:#5CC793; --accent-fg:#0E1A13; --accent-soft:#1C3227; --danger:#F07A6B;
+  --c-verde:#5CC793; --c-azul:#6FA8EC; --c-coral:#F08A68; --c-morado:#A68BEA; --c-oro:#E0B341; --c-rosa:#EC85AE;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 110px;display:grid;gap:18px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;letter-spacing:.005em}
+.num{font-variant-numeric:tabular-nums}
+button{cursor:pointer}
+
+/* Total arriba */
+.hero{display:grid;gap:4px;padding:6px 2px 0}
+.hero .brand{font-family:var(--f-display);font-weight:600;font-size:1.05rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hero .brand svg{width:22px;height:22px;color:var(--accent)}
+.hero .label{font-size:.95rem;color:var(--muted);margin-top:10px}
+.hero .total{font-family:var(--f-display);font-weight:700;font-size:clamp(2.6rem,12vw,3.6rem);line-height:1.05;overflow-wrap:anywhere}
+.hero .sub{color:var(--muted);font-size:.95rem}
+
+/* Botón principal */
+.big{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:18px;padding:17px 18px;
+  background:var(--accent);color:var(--accent-fg);font-family:var(--f-display);font-weight:600;font-size:1.2rem}
+.big:active{transform:scale(.99)}
+.big:disabled{opacity:.45;cursor:not-allowed}
+.big.alt{background:var(--surface);color:var(--fg);border:1.5px solid var(--line)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two .big{padding:15px 10px;font-size:1.08rem}
+.big svg{width:22px;height:22px}
+
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:4px}
+.sec-head h2{font-size:1.25rem}
+.link{border:0;background:none;color:var(--accent);font-weight:700;padding:6px 2px}
+
+/* Lista de cajas */
+.boxes{display:grid;gap:12px}
+.box{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;width:100%;text-align:left;
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;color:inherit}
+.box:active{transform:scale(.995)}
+.jar{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c)}
+.jar svg{width:26px;height:26px}
+.box .info{min-width:0}
+.box .name{font-family:var(--f-display);font-weight:600;font-size:1.12rem;overflow-wrap:anywhere}
+.box .for{color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
+.box .meta{color:var(--muted);font-size:.82rem;margin-top:2px}
+.box .amt{font-family:var(--f-display);font-weight:600;font-size:1.2rem;color:var(--c);white-space:nowrap;text-align:right}
+
+.empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:18px;padding:26px 18px;text-align:center;display:grid;gap:10px;justify-items:center}
+.empty p{margin:0;color:var(--muted)}
+.ghost{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:14px;padding:12px 18px;font-weight:700}
+
+/* Instalar */
+.install{display:grid;gap:10px;padding:14px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.install-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.install-row p{margin:0;font-size:.9rem;color:var(--muted);min-width:0;flex:1 1 180px}
+.install-row p b{color:var(--fg)}
+.install-btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;background:var(--fg);color:var(--bg);white-space:nowrap}
+.install-x{border:0;background:transparent;color:var(--muted);font-size:.85rem;text-decoration:underline;justify-self:start;padding:2px 0}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.92rem}
+.key{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:7px;border:1px solid var(--line);background:var(--bg);font-weight:600;white-space:nowrap}
+.key svg{width:14px;height:14px}
+.muted-li{color:var(--muted)}
+
+/* Hojas (ventanas que suben desde abajo) */
+dialog{border:0;padding:0;margin:auto auto 0;width:100%;max-width:560px;max-height:92dvh;background:var(--surface);color:var(--fg);
+  border-radius:24px 24px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+@media (min-width:620px){dialog{margin:auto;border-radius:24px}}
+dialog::backdrop{background:rgba(20,18,12,.45)}
+dialog[open]{animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){dialog[open]{animation:none}}
+.sheet{display:grid;gap:16px;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));overflow:auto;max-height:92dvh}
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.sheet-head h2{font-size:1.35rem}
+.x{border:0;background:var(--bg);color:var(--fg);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none}
+.x svg{width:18px;height:18px}
+
+.field{display:grid;gap:6px}
+.field>span{font-weight:600;font-size:.95rem}
+.field small{color:var(--muted);font-size:.85rem}
+.inp{width:100%;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);border-radius:14px;padding:13px 14px}
+.inp:focus{outline:none;border-color:var(--accent)}
+.money{position:relative}
+.money .inp{font-family:var(--f-display);font-weight:600;font-size:1.8rem;padding:10px 14px 10px 38px}
+.money::before{content:"$";position:absolute;left:15px;top:50%;transform:translateY(-50%);font-family:var(--f-display);font-weight:600;font-size:1.6rem;color:var(--muted)}
+
+.choose{display:grid;gap:8px}
+.opt{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);cursor:pointer}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .jar{width:38px;height:38px;border-radius:11px}
+.opt .jar svg{width:21px;height:21px}
+.opt .name{font-weight:700;overflow-wrap:anywhere}
+.opt .for{color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
+.opt .amt{color:var(--muted);font-size:.9rem;white-space:nowrap}
+.opt:has(input:checked){border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface))}
+.opt:has(input:disabled){opacity:.45;cursor:not-allowed}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+
+.colors{display:flex;flex-wrap:wrap;gap:10px}
+.sw{position:relative}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw span{display:block;width:38px;height:38px;border-radius:50%;background:var(--c);border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--line);cursor:pointer}
+.sw input:checked+span{box-shadow:0 0 0 3px var(--fg)}
+.sw input:focus-visible+span{outline:2px solid var(--accent);outline-offset:3px}
+
+.actions{display:grid;gap:10px}
+.err{color:var(--danger);font-size:.9rem;margin:0;min-height:0}
+.err:empty{display:none}
+
+/* Detalle de una caja */
+.d-total{display:grid;gap:2px;padding:16px;border-radius:18px;background:color-mix(in srgb,var(--c) 12%,var(--surface))}
+.d-total .label{color:var(--muted);font-size:.9rem}
+.d-total .v{font-family:var(--f-display);font-weight:700;font-size:2.4rem;color:var(--c);line-height:1.1;overflow-wrap:anywhere}
+.d-total .s{color:var(--muted);font-size:.88rem}
+.d-for{margin:0;color:var(--muted)}
+.hist{display:grid;gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.hist h3{font-size:1rem;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.hist h3 span{color:var(--muted);font-family:var(--f-body);font-weight:500;font-size:.85rem}
+.row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .date{font-weight:600}
+.row .date small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}
+.row .v{font-family:var(--f-display);font-weight:600;font-size:1.08rem;color:var(--c);white-space:nowrap;text-align:right}
+.row .v small{display:block;font-family:var(--f-body);font-weight:500;font-size:.75rem;color:var(--muted)}
+.row.out .v{color:var(--danger)}
+.del{border:0;background:none;color:var(--muted);width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
+.del svg{width:17px;height:17px}
+.del:hover{color:var(--danger);background:var(--bg)}
+.none{padding:18px 14px;color:var(--muted);text-align:center;margin:0}
+.d-tools{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center}
+.d-tools .link.danger{color:var(--danger)}
+
+.excel{display:grid;gap:8px;justify-items:center;text-align:center;margin-top:4px}
+.excel .ghost{display:inline-flex;align-items:center;gap:8px}
+.excel .ghost svg{width:20px;height:20px}
+.excel p{margin:0;color:var(--muted);font-size:.88rem}
+#dlgAsk{max-width:420px;margin:auto;border-radius:22px}
+.ask{display:grid;gap:14px;padding:22px 20px}
+.ask h2{font-size:1.25rem}
+.ask p{margin:0;color:var(--muted);white-space:pre-line}
+.ask .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ask .btns.one{grid-template-columns:1fr}
+.ask button{border:0;border-radius:14px;padding:13px 12px;font-weight:700;font-size:1rem}
+.ask .no{background:var(--bg);color:var(--fg);border:1.5px solid var(--line)}
+.ask .yes{background:var(--danger);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);
+  padding:12px 18px;border-radius:14px;font-weight:600;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:calc(100% - 32px);text-align:center;z-index:10}
+.toast[hidden]{display:none}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-jar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10h16v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 7.5h18V10H3z"/><path d="M10 14h4"/><circle cx="12" cy="4" r="1.6"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="brand"><svg><use href="#i-jar"/></svg>Cajitas de Ahorro</div>
+    <div class="label">Llevas ahorrado en total</div>
+    <div class="total num" id="grand">$0</div>
+    <div class="sub" id="grandSub">Aún no tienes cajas</div>
+  </header>
+
+  <section class="install" id="install" hidden aria-label="Instalar la app">
+    <div class="install-row">
+      <p><b>Instálala en tu celular.</b> Te queda el ícono como cualquier app y funciona sin internet.</p>
+      <button type="button" class="install-btn" id="installBtn">📲 Instalar app</button>
+    </div>
+    <ol class="steps" id="stepsIos" hidden>
+      <li>Toca el botón <span class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Compartir</span> de Safari.</li>
+      <li>Baja y elige <span class="key">Agregar a pantalla de inicio</span>.</li>
+      <li>Toca <span class="key">Agregar</span>. ¡Listo! Búscala como <b>Cajitas de Ahorro</b>.</li>
+      <li class="muted-li">¿No te sale la opción? Abre este enlace en <b>Safari</b>.</li>
+    </ol>
+    <ol class="steps" id="stepsAndroid" hidden>
+      <li>Toca los <span class="key">⋮</span> de arriba a la derecha en Chrome.</li>
+      <li>Elige <span class="key">Instalar app</span> o <span class="key">Agregar a pantalla principal</span>.</li>
+      <li>Confirma. ¡Listo! Búscala como <b>Cajitas de Ahorro</b>.</li>
+    </ol>
+    <button type="button" class="install-x" id="installHide">Ya la tengo / ocultar</button>
+  </section>
+
+  <div class="two">
+    <button type="button" class="big" id="addMoney"><svg><use href="#i-plus"/></svg>Meter dinero</button>
+    <button type="button" class="big alt" id="takeMoney"><svg><use href="#i-minus"/></svg>Sacar dinero</button>
+  </div>
+
+  <section aria-labelledby="hBoxes" style="display:grid;gap:12px">
+    <div class="sec-head">
+      <h2 id="hBoxes">Mis cajas</h2>
+      <button type="button" class="link" id="newBox">+ Nueva caja</button>
+    </div>
+    <div class="boxes" id="boxes"></div>
+  </section>
+
+  <section class="excel" id="excel" hidden>
+    <button type="button" class="ghost" id="xlsBtn"><svg><use href="#i-down"/></svg>Descargar en Excel</button>
+    <p id="xlsMsg">Un resumen y una hoja por caja con lo que metiste y sacaste.</p>
+  </section>
+</div>
+
+<!-- Nueva caja / editar caja -->
+<dialog id="dlgBox" aria-labelledby="dlgBoxTitle">
+  <form class="sheet" id="formBox" method="dialog" novalidate>
+    <div class="sheet-head">
+      <h2 id="dlgBoxTitle">Nueva caja</h2>
+      <button type="button" class="x" data-close aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <label class="field"><span>Nombre de la caja</span>
+      <input class="inp" id="boxName" maxlength="40" placeholder="Ej. Celular nuevo" autocomplete="off">
+    </label>
+    <label class="field"><span>¿Para qué es?</span>
+      <input class="inp" id="boxFor" maxlength="80" placeholder="Ej. Para comprarme un iPhone en diciembre" autocomplete="off">
+    </label>
+    <div class="field"><span>Color</span>
+      <div class="colors" id="colors"></div>
+    </div>
+    <p class="err" id="boxErr"></p>
+    <div class="actions"><button type="submit" class="big" id="boxSave">Crear caja</button></div>
+  </form>
+</dialog>
+
+<!-- Meter dinero -->
+<dialog id="dlgMoney" aria-labelledby="dlgMoneyTitle">
+  <form class="sheet" id="formMoney" method="dialog" novalidate>
+    <div class="sheet-head">
+      <h2 id="dlgMoneyTitle">Meter dinero</h2>
+      <button type="button" class="x" data-close aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <label class="field"><span id="moneyQ">¿Cuánto vas a meter?</span>
+      <div class="money"><input class="inp num" id="amount" inputmode="decimal" placeholder="0" autocomplete="off" aria-label="Cantidad en pesos"></div>
+    </label>
+    <fieldset class="field" style="border:0;padding:0;margin:0">
+      <legend style="font-weight:600;font-size:.95rem;margin-bottom:6px;padding:0" id="moneyLegend">¿En qué caja lo metes?</legend>
+      <div class="choose" id="choose"></div>
+    </fieldset>
+    <label class="field"><span>Fecha</span>
+      <input class="inp" type="date" id="date">
+      <small id="dateHint">Ya viene con la fecha de hoy. Cámbiala si lo metiste otro día.</small>
+    </label>
+    <p class="err" id="moneyErr"></p>
+    <div class="actions"><button type="submit" class="big" id="moneySave">Guardar</button></div>
+  </form>
+</dialog>
+
+<!-- Detalle de una caja -->
+<dialog id="dlgDetail" aria-labelledby="dName">
+  <div class="sheet" id="detail">
+    <div class="sheet-head">
+      <h2 id="dName">Caja</h2>
+      <button type="button" class="x" data-close aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <p class="d-for" id="dFor"></p>
+    <div class="d-total" id="dTotal">
+      <span class="label">Llevas ahorrado aquí</span>
+      <span class="v num" id="dSum">$0</span>
+      <span class="s" id="dCount"></span>
+    </div>
+    <div class="two">
+      <button type="button" class="big" id="dAdd"><svg><use href="#i-plus"/></svg>Meter aquí</button>
+      <button type="button" class="big alt" id="dTake"><svg><use href="#i-minus"/></svg>Sacar de aquí</button>
+    </div>
+    <div class="hist">
+      <h3>Entradas y salidas <span id="dHint"></span></h3>
+      <div id="dList"></div>
+    </div>
+    <div class="d-tools">
+      <button type="button" class="link" id="dEdit">Cambiar nombre o para qué</button>
+      <button type="button" class="link danger" id="dDel">Borrar esta caja</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Confirmar (reemplaza confirm() del navegador, que en algunos celulares no aparece) -->
+<dialog id="dlgAsk" aria-labelledby="askTitle">
+  <div class="ask">
+    <h2 id="askTitle"></h2>
+    <p id="askText"></p>
+    <div class="btns" id="askBtns">
+      <button type="button" class="no" id="askNo">Cancelar</button>
+      <button type="button" class="yes" id="askYes">Borrar</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+  const KEY = "mis-cajitas-v1";
+  const COLORS = ["verde", "azul", "coral", "morado", "oro", "rosa"];
+  const $ = id => document.getElementById(id);
+  const fmt0 = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmt2 = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const money = n => { n = Math.round(n * 100) / 100; return (Number.isInteger(n) ? fmt0 : fmt2).format(n); };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  const fDate = iso => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }); };
+  const fWeekday = iso => { const [y, m, d] = iso.split("-").map(Number); const s = new Date(y, m - 1, d).toLocaleDateString("es-MX", { weekday: "long" }); return s[0].toUpperCase() + s.slice(1); };
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+
+  // ---- Datos: se guardan en este celular/navegador ----
+  let db = { cajas: [], movs: [] };
+  try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.cajas) && Array.isArray(p.movs)) db = p; } } catch {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); return true; } catch { return false; } };
+
+  const movsOf = id => db.movs.filter(m => m.caja === id).sort((a, b) => b.fecha.localeCompare(a.fecha) || b.hora - a.hora);
+  // Las salidas se guardan con tipo "salida" y restan; lo demás son entradas
+  const isOut = m => m.tipo === "salida";
+  const signed = m => isOut(m) ? -m.monto : m.monto;
+  const sumOf = id => db.movs.reduce((t, m) => m.caja === id ? t + signed(m) : t, 0);
+  const inOut = ms => ms.reduce((r, m) => { r[isOut(m) ? 1 : 0] += m.monto; return r; }, [0, 0]);
+  const jar = c => `<span class="jar" style="--c:var(--c-${c})"><svg><use href="#i-jar"/></svg></span>`;
+
+  // ---- Pantalla principal ----
+  function render() {
+    const total = db.movs.reduce((t, m) => t + signed(m), 0);
+    $("grand").textContent = money(total);
+    $("excel").hidden = !db.movs.length;
+    $("grandSub").textContent = db.cajas.length ? `repartido en ${plural(db.cajas.length, "caja", "cajas")}` : "Aún no tienes cajas";
+    const list = $("boxes");
+    if (!db.cajas.length) {
+      list.innerHTML = `<div class="empty">${jar("verde")}<p>Crea tu primera caja de ahorro.<br>Ponle nombre y para qué es.</p><button type="button" class="ghost" id="emptyNew">+ Crear mi primera caja</button></div>`;
+      $("emptyNew").onclick = () => openBox();
+      return;
+    }
+    list.innerHTML = db.cajas.map(c => {
+      const ms = movsOf(c.id);
+      const meta = ms.length ? `${plural(ms.length, "movimiento", "movimientos")} · último ${fDate(ms[0].fecha)}` : "Sin movimientos todavía";
+      return `<button type="button" class="box" data-id="${c.id}" style="--c:var(--c-${c.color})">
+        ${jar(c.color)}
+        <span class="info"><span class="name" style="display:block">${esc(c.nombre)}</span>${c.para ? `<span class="for" style="display:block">${esc(c.para)}</span>` : ""}<span class="meta" style="display:block">${meta}</span></span>
+        <span class="amt num">${money(sumOf(c.id))}</span></button>`;
+    }).join("");
+    list.querySelectorAll(".box").forEach(b => b.onclick = () => openDetail(b.dataset.id));
+  }
+
+  // ---- Ventanas ----
+  function openDlg(d) { if (!d.open) d.showModal(); }
+  document.querySelectorAll("dialog").forEach(d => {
+    d.querySelectorAll("[data-close]").forEach(b => b.onclick = () => d.close());
+    d.addEventListener("click", e => { if (e.target === d) d.close(); }); // tocar afuera cierra
+  });
+
+  // Pregunta Sí/No con una ventana propia; con solo = true es un aviso con un botón
+  function ask(title, text, yes = "Borrar", solo = false) {
+    const d = $("dlgAsk");
+    $("askTitle").textContent = title; $("askText").textContent = text;
+    $("askYes").textContent = yes; $("askNo").hidden = solo;
+    $("askBtns").classList.toggle("one", solo);
+    $("askYes").className = solo ? "no" : "yes";
+    return new Promise(res => {
+      const end = v => { d.onclose = null; if (d.open) d.close(); res(v); };
+      $("askYes").onclick = () => end(true);
+      $("askNo").onclick = () => end(false);
+      d.onclose = () => end(false);
+      d.onclick = e => { if (e.target === d) end(false); };
+      d.showModal();
+      setTimeout(() => (solo ? $("askYes") : $("askNo")).focus(), 30);
+    });
+  }
+
+  let toastT;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
+
+  // ---- Nueva caja / editar ----
+  let editing = null;
+  function openBox(id) {
+    editing = id ? db.cajas.find(c => c.id === id) : null;
+    $("dlgBoxTitle").textContent = editing ? "Editar caja" : "Nueva caja";
+    $("boxSave").textContent = editing ? "Guardar cambios" : "Crear caja";
+    $("boxName").value = editing ? editing.nombre : "";
+    $("boxFor").value = editing ? editing.para : "";
+    const used = new Set(db.cajas.map(c => c.color));
+    const pick = editing ? editing.color : (COLORS.find(c => !used.has(c)) || COLORS[db.cajas.length % COLORS.length]);
+    $("colors").innerHTML = COLORS.map(c => `<label class="sw" style="--c:var(--c-${c})"><input type="radio" name="color" value="${c}" ${c === pick ? "checked" : ""} aria-label="Color ${c}"><span></span></label>`).join("");
+    $("boxErr").textContent = "";
+    openDlg($("dlgBox"));
+    setTimeout(() => $("boxName").focus(), 50);
+  }
+  $("formBox").addEventListener("submit", e => {
+    e.preventDefault();
+    const nombre = $("boxName").value.trim(), para = $("boxFor").value.trim();
+    const color = (document.querySelector('#colors input:checked') || {}).value || "verde";
+    if (!nombre) { $("boxErr").textContent = "Escribe un nombre para tu caja."; $("boxName").focus(); return; }
+    if (editing) Object.assign(editing, { nombre, para, color });
+    else db.cajas.push({ id: uid(), nombre, para, color, creada: today() });
+    save(); render();
+    $("dlgBox").close();
+    if (editing && $("dlgDetail").open) openDetail(editing.id);
+    toast(editing ? "Caja actualizada" : `Caja “${nombre}” creada`);
+  });
+  $("newBox").onclick = () => openBox();
+
+  // ---- Meter o sacar dinero ----
+  let mode = "entrada";
+  function openMoney(preset, m = "entrada") {
+    if (!db.cajas.length) { toast("Primero crea una caja"); openBox(); return; }
+    const out = m === "salida";
+    if (out && !db.cajas.some(c => sumOf(c.id) > 0)) { toast("Tus cajas están vacías, no hay de dónde sacar"); return; }
+    mode = m;
+    $("dlgMoneyTitle").textContent = out ? "Sacar dinero" : "Meter dinero";
+    $("moneyQ").textContent = out ? "¿Cuánto vas a sacar?" : "¿Cuánto vas a meter?";
+    $("moneyLegend").textContent = out ? "¿De qué caja lo sacas?" : "¿En qué caja lo metes?";
+    $("moneySave").textContent = out ? "Sacar" : "Guardar";
+    $("dateHint").textContent = `Ya viene con la fecha de hoy. Cámbiala si lo ${out ? "sacaste" : "metiste"} otro día.`;
+    const can = c => !out || sumOf(c.id) > 0;
+    const usable = db.cajas.filter(can);
+    const pre = db.cajas.find(c => c.id === preset);
+    const sel = pre && can(pre) ? pre.id : (usable.length === 1 ? usable[0].id : null);
+    $("choose").innerHTML = db.cajas.map(c => `<label class="opt" style="--c:var(--c-${c.color})">
+      <input type="radio" name="caja" value="${c.id}" ${c.id === sel ? "checked" : ""} ${can(c) ? "" : "disabled"}>
+      ${jar(c.color)}
+      <span style="min-width:0"><span class="name" style="display:block">${esc(c.nombre)}</span>${c.para ? `<span class="for" style="display:block">${esc(c.para)}</span>` : ""}</span>
+      <span class="amt num">${money(sumOf(c.id))}</span></label>`).join("");
+    $("amount").value = "";
+    $("date").value = today(); $("date").max = today();
+    $("moneyErr").textContent = "";
+    openDlg($("dlgMoney"));
+    setTimeout(() => $("amount").focus(), 50);
+  }
+  $("formMoney").addEventListener("submit", e => {
+    e.preventDefault();
+    const monto = parseFloat($("amount").value.replace(/[$\s,]/g, ""));
+    const caja = (document.querySelector('#choose input:checked') || {}).value;
+    const fecha = $("date").value || today();
+    const out = mode === "salida";
+    if (!(monto > 0)) { $("moneyErr").textContent = `Escribe cuánto dinero vas a ${out ? "sacar" : "meter"}.`; $("amount").focus(); return; }
+    if (!caja) { $("moneyErr").textContent = out ? "Elige de qué caja lo vas a sacar." : "Elige en qué caja lo vas a meter."; return; }
+    const c = db.cajas.find(x => x.id === caja);
+    const cant = Math.round(monto * 100) / 100;
+    if (out && cant > sumOf(caja) + 1e-9) { $("moneyErr").textContent = `En “${c.nombre}” solo tienes ${money(sumOf(caja))}. No puedes sacar más.`; $("amount").focus(); return; }
+    const mov = { id: uid(), caja, monto: cant, fecha, hora: Date.now() };
+    if (out) mov.tipo = "salida";
+    db.movs.push(mov);
+    save(); render();
+    $("dlgMoney").close();
+    if ($("dlgDetail").open) openDetail(caja);
+    toast(out ? `Sacaste ${money(cant)} de “${c.nombre}”. Te quedan ${money(sumOf(caja))}` : `${money(cant)} a “${c.nombre}”. Ya llevas ${money(sumOf(caja))}`);
+  });
+  $("addMoney").onclick = () => openMoney();
+  $("takeMoney").onclick = () => openMoney(null, "salida");
+
+  // ---- Detalle de una caja: total, fechas y cantidades ----
+  let current = null;
+  function openDetail(id) {
+    const c = db.cajas.find(x => x.id === id); if (!c) return;
+    current = id;
+    const ms = movsOf(id);
+    $("detail").style.setProperty("--c", `var(--c-${c.color})`);
+    $("dName").textContent = c.nombre;
+    $("dFor").textContent = c.para || "";
+    $("dFor").hidden = !c.para;
+    $("dSum").textContent = money(sumOf(id));
+    const [metido, sacado] = inOut(ms);
+    $("dCount").textContent = !ms.length ? "Todavía no le has metido dinero" : sacado ? `Metiste ${money(metido)} · Sacaste ${money(sacado)}` : `en ${plural(ms.length, "depósito", "depósitos")}, desde el ${fDate(ms[ms.length - 1].fecha)}`;
+    $("dTake").disabled = sumOf(id) <= 0;
+    $("dHint").textContent = ms.length ? "más nuevo arriba" : "";
+    $("dList").innerHTML = ms.length ? ms.map(m => `<div class="row${isOut(m) ? " out" : ""}">
+        <span class="date">${fDate(m.fecha)}<small>${fWeekday(m.fecha)}</small></span>
+        <span class="v num">${isOut(m) ? "−" : "+"}${money(m.monto)}<small>${isOut(m) ? "Salida" : "Entrada"}</small></span>
+        <button type="button" class="del" data-m="${m.id}" aria-label="Borrar ${isOut(m) ? "salida" : "entrada"} de ${money(m.monto)} del ${fDate(m.fecha)}"><svg><use href="#i-trash"/></svg></button>
+      </div>`).join("") : `<p class="none">Aquí vas a ver cada fecha y cantidad que metas o saques.</p>`;
+    $("dList").querySelectorAll(".del").forEach(b => b.onclick = async () => {
+      const m = db.movs.find(x => x.id === b.dataset.m); if (!m) return;
+      const que = isOut(m) ? "la salida" : "la entrada";
+      if (!isOut(m) && sumOf(id) - m.monto < -1e-9) { await ask("No se puede borrar", `Si borras ${que} de ${money(m.monto)}, la caja quedaría en negativo porque ya sacaste ese dinero.\nBorra primero la salida.`, "Entendido", true); return; }
+      if (!await ask(`¿Borrar ${que}?`, `${isOut(m) ? "−" : "+"}${money(m.monto)} del ${fDate(m.fecha)}.\nÚsalo solo si te equivocaste.`)) return;
+      db.movs = db.movs.filter(x => x !== m); save(); render(); openDetail(id); toast(isOut(m) ? "Salida borrada" : "Entrada borrada");
+    });
+    openDlg($("dlgDetail"));
+  }
+  $("dAdd").onclick = () => openMoney(current);
+  $("dTake").onclick = () => openMoney(current, "salida");
+  $("dEdit").onclick = () => openBox(current);
+  $("dDel").onclick = async () => {
+    const c = db.cajas.find(x => x.id === current); if (!c) return;
+    const n = db.movs.filter(m => m.caja === c.id).length;
+    const warn = n ? `\nTiene ${money(sumOf(c.id))} y ${plural(n, "movimiento", "movimientos")} que también se borrarán.` : "";
+    if (!await ask(`¿Borrar la caja “${c.nombre}”?`, `${warn.trim()}${warn ? "\n" : ""}Esto no se puede deshacer.`, "Borrar caja")) return;
+    db.cajas = db.cajas.filter(x => x !== c); db.movs = db.movs.filter(m => m.caja !== c.id);
+    save(); render(); $("dlgDetail").close(); toast("Caja borrada");
+  };
+
+  // ---- Excel: hoja Resumen + una hoja por caja con sus entradas y salidas ----
+  const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  const isPhone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  async function entregar(blob, filename) {
+    const file = new File([blob], filename, { type: XLSX_MIME });
+    // En el celular abre el menú de compartir (Guardar en Archivos, Drive, WhatsApp…); en la compu, descarga directa
+    if (isPhone && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: filename }); return "ok"; }
+      catch (e) { if (e && e.name === "AbortError") return "cancel"; }
+    }
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return "ok";
+  }
+  $("xlsBtn").onclick = async () => {
+    const msg = $("xlsMsg");
+    if (!window.XLSX) { msg.textContent = "No se pudo preparar el Excel. Conéctate a internet una vez y vuelve a intentar."; return; }
+    // Número de día de Excel (exacto, sin líos de zona horaria)
+    const toDate = iso => { const [y, m, d] = iso.split("-").map(Number); return (Date.UTC(y, m - 1, d) - Date.UTC(1899, 11, 30)) / 86400000; };
+    const MONEY = '"$"#,##0.00;-"$"#,##0.00';
+    const sheet = (rows, moneyCols, dateCol, widths) => {
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      for (let r = 1; r < rows.length; r++) {
+        if (dateCol != null) { const f = ws[XLSX.utils.encode_cell({ r, c: dateCol })]; if (f && f.t === "n") f.z = "dd/mm/yyyy"; }
+        for (const c of moneyCols) { const v = ws[XLSX.utils.encode_cell({ r, c })]; if (v && v.t === "n") v.z = MONEY; }
+      }
+      ws["!cols"] = widths.map(wch => ({ wch }));
+      return ws;
+    };
+    const wb = XLSX.utils.book_new();
+    const nameW = Math.max(14, ...db.cajas.map(c => c.nombre.length + 2));
+
+    // Resumen: cuánto metiste, sacaste y te queda en cada caja
+    const resumen = [["Caja", "Para qué", "Metido", "Sacado", "Te queda"]];
+    let tm = 0, ts = 0;
+    for (const c of db.cajas) { const [mi, so] = inOut(db.movs.filter(m => m.caja === c.id)); tm += mi; ts += so; resumen.push([c.nombre, c.para || "", mi, -so, mi - so]); }
+    resumen.push([], ["Total", "", tm, -ts, tm - ts]);
+    XLSX.utils.book_append_sheet(wb, sheet(resumen, [2, 3, 4], null, [nameW, Math.max(14, ...db.cajas.map(c => (c.para || "").length + 2)), 14, 14, 14]), "Resumen");
+
+    // Una hoja por caja (los nombres de hoja no aceptan : \ / ? * [ ] ni más de 31 letras)
+    const used = new Set(["resumen"]);
+    for (const c of db.cajas) {
+      const ms = db.movs.filter(m => m.caja === c.id).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora - b.hora);
+      const [mi, so] = inOut(ms);
+      const rows = [["Fecha", "Movimiento", "Cantidad"], ...ms.map(m => [toDate(m.fecha), isOut(m) ? "Salida" : "Entrada", signed(m)])];
+      if (!ms.length) rows.push(["", "Sin movimientos", ""]);
+      rows.push([], ["", "Total metido", mi], ["", "Total sacado", -so], ["", "Te queda", mi - so]);
+      let base = (c.nombre.replace(/[:\\/?*\[\]]/g, " ").trim() || "Caja").slice(0, 28), nm = base, k = 2;
+      while (used.has(nm.toLowerCase())) nm = `${base.slice(0, 26)} ${k++}`;
+      used.add(nm.toLowerCase());
+      XLSX.utils.book_append_sheet(wb, sheet(rows, [2], 0, [12, 15, 14]), nm);
+    }
+    const blob = new Blob([XLSX.write(wb, { bookType: "xlsx", type: "array" })], { type: XLSX_MIME });
+    const res = await entregar(blob, `Cajitas de Ahorro ${today()}.xlsx`);
+    msg.textContent = res === "cancel" ? "No se guardó. Puedes intentar otra vez cuando quieras." : "Listo, se descargó tu Excel.";
+  };
+
+  render();
+})();
+</script>
+<script>
+(() => {
+  const box = document.getElementById("install"), btn = document.getElementById("installBtn");
+  const ios = document.getElementById("stepsIos"), andr = document.getElementById("stepsAndroid");
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(ua);
+  const installed = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  let hidden = false; try { hidden = localStorage.getItem("install-hidden") === "1"; } catch {}
+  let prompt = null;
+
+  function show() { if (!installed() && !hidden) box.hidden = false; }
+  if (isIOS || isAndroid) show();
+
+  // Android / Chrome: instalar con un toque
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); prompt = e; show(); });
+  window.addEventListener("appinstalled", () => { box.hidden = true; });
+
+  btn.addEventListener("click", async () => {
+    if (prompt) {
+      prompt.prompt();
+      const r = await prompt.userChoice.catch(() => null);
+      prompt = null;
+      if (r && r.outcome === "accepted") box.hidden = true;
+      return;
+    }
+    const steps = isIOS ? ios : andr;
+    steps.hidden = !steps.hidden;
+  });
+  document.getElementById("installHide").addEventListener("click", () => {
+    box.hidden = true;
+    try { localStorage.setItem("install-hidden", "1"); } catch {}
+  });
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+</script>
+</body>
+</html>

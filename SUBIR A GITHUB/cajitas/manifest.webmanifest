@@ -1,0 +1,16 @@
+{
+  "name": "Cajitas de Ahorro",
+  "short_name": "Cajitas de Ahorro",
+  "description": "Tus cajas de ahorro: para qué es cada una, cuánto llevas y cuándo le metiste dinero.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F1E7",
+  "theme_color": "#1E6B4A",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
