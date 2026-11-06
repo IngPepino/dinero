@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumina Accesorios</title>
+<meta name="description" content="Accesorios para tu auto. Envío a domicilio incluido y pagas cuando te llega.">
+<meta name="theme-color" content="#08102e">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lumina Accesorios · Accesorios para tu auto">
+<meta property="og:description" content="Aspiradora $499 · Inflador $699 · Combo $999. Envío incluido y pagas al recibir.">
+<meta property="og:image" content="https://ingpepino.github.io/dinero/tienda/img/compartir.jpg">
+<meta property="og:url" content="https://ingpepino.github.io/dinero/tienda/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f6bff'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='white' font-family='Arial Black'%3EL%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@500;600;700;800;900&family=Yellowtail&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050816; --bg2: #08102e; --card: rgba(255,255,255,.06); --line: rgba(140,180,255,.25);
+    --text: #fff; --muted: #a9c6ff; --blue: #2f6bff; --cyan: #00d4ff; --wa: #25d366;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Montserrat', system-ui, sans-serif; color: var(--text); background: var(--bg);
+    background-image:
+      radial-gradient(900px 600px at 50% -10%, rgba(41,98,255,.5), transparent 70%),
+      radial-gradient(700px 500px at 110% 40%, rgba(0,200,255,.12), transparent 70%);
+    background-repeat: no-repeat; min-height: 100vh; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 16px; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+  .brand { display: flex; align-items: baseline; gap: 8px; text-decoration: none; color: #fff; }
+  .brand .s { font-family: 'Yellowtail', cursive; font-size: 34px; color: #7fd3ff; text-shadow: 0 0 20px rgba(0,170,255,.5); }
+  .brand .b { font-family: 'Anton', sans-serif; font-size: 22px; letter-spacing: 2px; }
+  .navwa { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #fff; font-weight: 800; font-size: 14px;
+    padding: 10px 16px; border-radius: 30px; background: var(--wa); }
+  .navwa svg { width: 18px; height: 18px; }
+  @media (max-width: 420px) {
+    .brand .s { font-size: 28px; } .brand .b { font-size: 17px; letter-spacing: 1px; }
+    .navwa { padding: 8px 12px; font-size: 13px; }
+  }
+
+  .hero { text-align: center; padding: 30px 0 10px; }
+  .hero h1 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: clamp(44px, 9vw, 92px); line-height: 1; letter-spacing: 1px;
+    background: linear-gradient(180deg, #fff 0%, #fff 55%, #9cc4ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { margin: 14px auto 0; max-width: 560px; font-size: 17px; font-weight: 600; color: var(--muted); line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 30px; background: var(--card);
+    border: 1.5px solid var(--line); font-weight: 700; font-size: 14px; }
+  .chip i { font-style: normal; color: var(--cyan); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin: 40px 0 10px; }
+  .card { position: relative; display: flex; flex-direction: column; border-radius: 26px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); border: 2px solid var(--line);
+    box-shadow: 0 24px 50px rgba(0,0,0,.4); }
+  .card.hot { border-color: rgba(120,200,255,.75); box-shadow: 0 24px 60px rgba(30,70,255,.4); }
+  .badge { position: absolute; top: 14px; left: 14px; z-index: 1; background: linear-gradient(90deg, #00d4ff, #5ce1ff); color: #04113a;
+    font-weight: 900; font-size: 13px; letter-spacing: 1px; padding: 7px 14px; border-radius: 30px; }
+  .card img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; }
+  .info { display: flex; flex-direction: column; flex: 1; padding: 20px 22px 22px; }
+  .info h2 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 30px; letter-spacing: .5px; line-height: 1.1; }
+  .info ul { list-style: none; margin: 12px 0 16px; display: grid; gap: 7px; }
+  .info li { display: flex; gap: 9px; font-size: 15px; font-weight: 600; color: #d6e4ff; line-height: 1.35; }
+  .info li::before { content: "✓"; color: var(--cyan); font-weight: 900; }
+  .priceRow { margin-top: auto; display: flex; align-items: baseline; gap: 10px; }
+  .price { font-family: 'Anton', sans-serif; font-size: 46px; line-height: 1; }
+  .old { color: var(--muted); font-weight: 700; text-decoration: line-through; }
+  .save { margin-left: auto; background: rgba(0,212,255,.15); color: var(--cyan); font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 20px; }
+  .btn { margin-top: 16px; width: 100%; border: 0; cursor: pointer; font: inherit; font-weight: 900; font-size: 17px; letter-spacing: .5px;
+    color: #fff; padding: 16px; border-radius: 16px; background: linear-gradient(90deg, #2f6bff, #00a8ff);
+    box-shadow: 0 10px 26px rgba(47,107,255,.45); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn:active { transform: scale(.98); }
+  .btn.wa { background: var(--wa); box-shadow: 0 10px 26px rgba(37,211,102,.35); }
+  .btn svg { width: 22px; height: 22px; }
+
+  section h3 { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 36px; letter-spacing: 1px; text-align: center; margin: 56px 0 22px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .step { padding: 22px; border-radius: 22px; background: var(--card); border: 1.5px solid var(--line); }
+  .step b { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; font-size: 20px;
+    background: linear-gradient(135deg, #2f6bff, #00c2ff); margin-bottom: 12px; }
+  .step h4 { font-size: 18px; font-weight: 800; }
+  .step p { margin-top: 6px; color: var(--muted); font-weight: 600; font-size: 15px; line-height: 1.45; }
+
+  details { border-radius: 18px; background: var(--card); border: 1.5px solid var(--line); margin-bottom: 12px; }
+  summary { cursor: pointer; padding: 18px 20px; font-weight: 800; font-size: 16px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--cyan); font-size: 22px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { padding: 0 20px 18px; color: #c9d8f7; font-weight: 600; line-height: 1.5; font-size: 15px; }
+
+  footer { text-align: center; padding: 50px 0 110px; color: var(--muted); font-weight: 600; font-size: 14px; line-height: 1.7; }
+  footer a { color: #fff; }
+
+  .fab { position: fixed; right: 16px; bottom: 16px; z-index: 5; width: 60px; height: 60px; border-radius: 50%; background: var(--wa);
+    display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  .fab svg { width: 32px; height: 32px; }
+
+  dialog { margin: auto; width: min(520px, calc(100% - 24px)); max-height: calc(100% - 24px); border: 1.5px solid var(--line); border-radius: 24px;
+    background: #0b1433; color: #fff; padding: 0; }
+  dialog::backdrop { background: rgba(2,4,12,.75); }
+  .dlg { padding: 22px; }
+  .dlg header { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+  .dlg h3 { margin: 0; text-align: left; font-size: 28px; }
+  .x { background: none; border: 0; color: var(--muted); font-size: 28px; cursor: pointer; line-height: 1; }
+  .sum { display: flex; gap: 12px; align-items: center; margin: 14px 0 6px; padding: 12px; border-radius: 16px; background: var(--card); }
+  .sum img { width: 64px; height: 64px; border-radius: 12px; background: #fff; object-fit: contain; }
+  .sum b { display: block; font-size: 16px; }
+  .sum span { color: var(--muted); font-weight: 700; font-size: 14px; }
+  .qty { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .qty button { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid var(--line); background: none; color: #fff; font-size: 20px; cursor: pointer; }
+  .qty output { min-width: 18px; text-align: center; font-weight: 800; }
+  .total { text-align: right; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+  .total b { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 30px; color: #fff; margin-left: 6px; }
+  label { display: block; margin-top: 12px; font-size: 13px; font-weight: 800; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  input, textarea { width: 100%; margin-top: 6px; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: rgba(255,255,255,.05); color: #fff; font: inherit; font-size: 16px; font-weight: 600; }
+  input:focus, textarea:focus { outline: 2px solid var(--blue); border-color: transparent; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .err { margin-top: 10px; color: #ff8a8a; font-weight: 700; font-size: 14px; min-height: 20px; }
+  .note { margin-top: 8px; color: var(--muted); font-size: 13px; font-weight: 600; text-align: center; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#"><span class="s">Lumina</span><span class="b">ACCESORIOS</span></a>
+    <a class="navwa" id="navwa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.4-.9-2.8-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp</a>
+  </nav>
+
+  <header class="hero">
+    <h1>ACCESORIOS PARA TU AUTO</h1>
+    <p>Lo pides en un minuto, te lo llevamos a tu casa y <b style="color:#fff">pagas hasta que te llega</b>.</p>
+    <div class="chips">
+      <span class="chip"><i>●</i> Envío incluido</span>
+      <span class="chip"><i>●</i> Pagas al recibir</span>
+      <span class="chip"><i>●</i> Atención por WhatsApp</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid" id="grid"></div>
+
+    <section>
+      <h3>¿CÓMO PIDO?</h3>
+      <div class="steps">
+        <div class="step"><b>1</b><h4>Elige tu producto</h4><p>Toca «Lo quiero» y llena tus datos de envío.</p></div>
+        <div class="step"><b>2</b><h4>Mándalo por WhatsApp</h4><p>Tu pedido llega a nuestro WhatsApp y te confirmamos.</p></div>
+        <div class="step"><b>3</b><h4>Recibe y paga</h4><p>Lo recibes en tu casa y pagas al repartidor. Sin pagar nada por adelantado.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h3>PREGUNTAS FRECUENTES</h3>
+      <details><summary>¿Tengo que pagar antes?</summary><p>No. Pagas cuando el paquete llega a tu casa. No necesitas tarjeta.</p></details>
+      <details><summary>¿El envío cuesta aparte?</summary><p>No, el precio que ves ya incluye el envío a tu domicilio.</p></details>
+      <details><summary>¿Cuánto tarda en llegar?</summary><p>Depende de tu ciudad. Al confirmar tu pedido por WhatsApp te decimos el tiempo de entrega.</p></details>
+      <details><summary>¿Cómo sé que es seguro?</summary><p>Como pagas al recibir, no arriesgas tu dinero. Además somos Lumina Car Wash y puedes escribirnos por WhatsApp cuando quieras.</p></details>
+    </section>
+  </main>
+
+  <footer>
+    Lumina Accesorios · de <b>Lumina Car Wash</b><br>
+    WhatsApp: <a id="footwa" href="#" target="_blank" rel="noopener">612 153 0502</a><br>
+    Precios en pesos mexicanos (MXN)
+  </footer>
+</div>
+
+<a class="fab" id="fab" href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.4-.9-2.8-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+
+<dialog id="dlg">
+  <form class="dlg" id="form" method="dialog" novalidate>
+    <header><h3>TU PEDIDO</h3><button type="button" class="x" id="close" aria-label="Cerrar">×</button></header>
+    <div class="sum">
+      <img id="sumImg" alt="">
+      <div><b id="sumName"></b><span id="sumPrice"></span></div>
+      <div class="qty"><button type="button" id="minus">−</button><output id="qty">1</output><button type="button" id="plus">+</button></div>
+    </div>
+    <div class="total">Total con envío:<b id="total"></b></div>
+
+    <label>Tu nombre<input id="f_nombre" autocomplete="name" placeholder="Nombre y apellido"></label>
+    <label>Teléfono / WhatsApp<input id="f_tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="10 dígitos"></label>
+    <label>Calle y número<input id="f_calle" autocomplete="address-line1" placeholder="Ej. Av. Juárez 123"></label>
+    <label>Colonia<input id="f_colonia" placeholder="Colonia"></label>
+    <div class="two">
+      <label>Código postal<input id="f_cp" inputmode="numeric" autocomplete="postal-code" placeholder="CP"></label>
+      <label>Ciudad<input id="f_ciudad" autocomplete="address-level2" placeholder="Ciudad"></label>
+    </div>
+    <label>Estado<input id="f_estado" autocomplete="address-level1" placeholder="Estado"></label>
+    <label>Referencias (opcional)<textarea id="f_ref" rows="2" placeholder="Color de la casa, entre qué calles…"></textarea></label>
+
+    <div class="err" id="err"></div>
+    <button type="submit" class="btn wa"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.4-.9-2.8-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>Enviar pedido por WhatsApp</button>
+    <p class="note">Tus datos solo se mandan a nuestro WhatsApp para preparar tu envío. Esta página no los guarda.</p>
+  </form>
+</dialog>
+
+<script>
+  // ====== Para cambiar precios o productos, edita solo esta parte ======
+  const WHATSAPP = "526121530502";
+  const PRODUCTOS = [
+    { id: "aspiradora", nombre: "Aspiradora portátil", precio: 499, img: "img/aspiradora.jpg",
+      puntos: ["Inalámbrica, recargable por USB", "Para el carro y la casa", "Incluye boquillas y cepillo"] },
+    { id: "inflador", nombre: "Inflador de llantas", precio: 699, img: "img/inflador.jpg",
+      puntos: ["Con medidor de presión", "Se conecta al encendedor del carro", "Boquillas para balones y bici"] },
+    { id: "combo", nombre: "Combo: aspiradora + inflador", precio: 999, antes: 1198, img: "img/combo.jpg", destacado: "★ IDEAL PARA REGALO",
+      puntos: ["Los dos productos juntos", "Ahorras $199", "Perfecto para regalar en Navidad"] },
+  ];
+  // =====================================================================
+
+  const $ = id => document.getElementById(id);
+  const pesos = n => "$" + n.toLocaleString("es-MX");
+  const wa = text => "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(text);
+  const hola = wa("Hola! Vi la tienda Lumina Accesorios y tengo una pregunta");
+  ["navwa", "fab", "footwa"].forEach(id => $(id).href = hola);
+
+  $("grid").innerHTML = PRODUCTOS.map(p => `
+    <article class="card${p.destacado ? " hot" : ""}">
+      ${p.destacado ? `<span class="badge">${p.destacado}</span>` : ""}
+      <img src="${p.img}" alt="${p.nombre}" loading="lazy">
+      <div class="info">
+        <h2>${p.nombre.toUpperCase()}</h2>
+        <ul>${p.puntos.map(x => `<li>${x}</li>`).join("")}</ul>
+        <div class="priceRow">
+          <span class="price">${pesos(p.precio)}</span>
+          ${p.antes ? `<span class="old">${pesos(p.antes)}</span><span class="save">-${pesos(p.antes - p.precio)}</span>` : ""}
+        </div>
+        <button class="btn" data-id="${p.id}">LO QUIERO</button>
+      </div>
+    </article>`).join("");
+
+  let actual = null, cantidad = 1;
+  const pintar = () => { $("qty").value = cantidad; $("qty").textContent = cantidad; $("total").textContent = pesos(actual.precio * cantidad); };
+  document.querySelectorAll("[data-id]").forEach(b => b.addEventListener("click", () => {
+    actual = PRODUCTOS.find(p => p.id === b.dataset.id); cantidad = 1;
+    $("sumImg").src = actual.img; $("sumName").textContent = actual.nombre; $("sumPrice").textContent = pesos(actual.precio) + " c/u";
+    $("err").textContent = ""; pintar(); $("dlg").showModal();
+  }));
+  $("minus").onclick = () => { if (cantidad > 1) { cantidad--; pintar(); } };
+  $("plus").onclick = () => { if (cantidad < 10) { cantidad++; pintar(); } };
+  $("close").onclick = () => $("dlg").close();
+
+  $("form").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = k => $("f_" + k).value.trim();
+    const faltan = [["nombre","tu nombre"],["tel","tu teléfono"],["calle","calle y número"],["colonia","la colonia"],["cp","el código postal"],["ciudad","la ciudad"],["estado","el estado"]]
+      .filter(([k]) => !v(k)).map(([, t]) => t);
+    if (faltan.length) { $("err").textContent = "Falta: " + faltan.join(", ") + "."; return; }
+    if (v("tel").replace(/\D/g, "").length < 10) { $("err").textContent = "El teléfono debe tener 10 dígitos."; return; }
+    const texto =
+`Hola! Quiero hacer un pedido 🛒
+
+*Producto:* ${actual.nombre}
+*Cantidad:* ${cantidad}
+*Total:* ${pesos(actual.precio * cantidad)} (pago al recibir)
+
+*Nombre:* ${v("nombre")}
+*Teléfono:* ${v("tel")}
+*Dirección:* ${v("calle")}, Col. ${v("colonia")}, CP ${v("cp")}, ${v("ciudad")}, ${v("estado")}` + (v("ref") ? `
+*Referencias:* ${v("ref")}` : "");
+    window.open(wa(texto), "_blank", "noopener");
+    $("dlg").close();
+  });
+</script>
+</body>
+</html>
